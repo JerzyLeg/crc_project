@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Doomsday Checker</title>
+  <style>
+    body {
+      background-color: #f0f4f8;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      background-color: #ffffff;
+      padding: 2rem;
+      border-radius: 1rem;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      width: 300px;
+    }
+
+    h1 {
+      margin-bottom: 1rem;
+      color: #333;
+    }
+
+    select, button {
+      width: 100%;
+      padding: 0.6rem;
+      margin: 0.5rem 0;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 0.5rem;
+    }
+
+    button {
+      background-color: #4CAF50;
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.2s ease-in-out;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+    #result {
+      margin-top: 1rem;
+      padding: 1rem;
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #2c3e50;
+      background-color: #e8f0fe;
+      border: 2px solid #4a90e2;
+      border-radius: 0.75rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      transition: opacity 0.3s ease-in-out;
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Doomsday Checker</h1>
+    <form id="dateForm">
+      <select id="day" required></select>
+      <select id="month" required>
+        <option disabled selected value="">Select month</option>
+        <option value="1">January</option>
+        <option value="2">February</option>
+        <option value="3">March</option>
+        <option value="4">April</option>
+        <option value="5">May</option>
+        <option value="6">June</option>
+        <option value="7">July</option>
+        <option value="8">August</option>
+        <option value="9">September</option>
+        <option value="10">October</option>
+        <option value="11">November</option>
+        <option value="12">December</option>
+      </select>
+      <select id="year" required></select>
+      <button type="submit">Check Day</button>
+    </form>
+    <div id="result"></div>
+  </div>
+
+  <script>
+    // Populate day dropdown
+    const daySelect = document.getElementById("day");
+    for (let i = 1; i <= 31; i++) {
+      const option = document.createElement("option");
+      option.value = i;
+      option.text = i;
+      daySelect.appendChild(option);
+    }
+
+    // Populate year dropdown (1900–2100)
+    const yearSelect = document.getElementById("year");
+    const currentYear = new Date().getFullYear();
+    for (let i = currentYear - 50; i <= currentYear + 50; i++) {
+      const option = document.createElement("option");
+      option.value = i;
+      option.text = i;
+      yearSelect.appendChild(option);
+    }
+
+    // Handle form submission
+    document.getElementById("dateForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const day = parseInt(document.getElementById("day").value);
+      const month = parseInt(document.getElementById("month").value);
+      const year = parseInt(document.getElementById("year").value);
+
+      const response = await fetch("/doomsday", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ day, month, year }),
+      });
+
+      const data = await response.json();
+      const result = document.getElementById("result");
+
+      if (data.error) {
+            result.textContent = "❌ Error: " + data.error;
+            result.style.backgroundColor = "#fdecea";
+            result.style.borderColor = "#f44336";
+            result.style.color = "#c0392b";
+      } else {
+            result.textContent = data.day.toUpperCase();
+            result.style.backgroundColor = "#e8f0fe";
+            result.style.borderColor = "#4a90e2";
+            result.style.color = "#2c3e50";
+      }
+    });
+  </script>
+</body>
+</html>
