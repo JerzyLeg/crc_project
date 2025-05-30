@@ -1,0 +1,1 @@
+link to working app: https://doomsday-app.purplebush-2bdbfff7.polandcentral.azurecontainerapps.io/
